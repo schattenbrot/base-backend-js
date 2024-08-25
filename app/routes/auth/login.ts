@@ -24,20 +24,21 @@ const loginHandler: Handler = async (req, res, next) => {
 		const user = await UserModel.findOne({ email });
 		if (!user) {
 			return next(new UnauthorizedError('Wrong email or password'));
-			return res
-				.status(401)
-				.json({ errors: [{ msg: 'Wrong email or password' }] });
 		}
 
 		const passwordsMatch = await bcrypt.compare(password, user.password);
 		if (!passwordsMatch) {
 			return next(new UnauthorizedError('Wrong email or password'));
-			return res
-				.status(401)
-				.json({ errors: [{ msg: 'Wrong email or password' }] });
 		}
 
 		const token = generateJWT(user._id, user.email, user.roles);
+
+		res.cookie('name', 'value', {
+			maxAge: 86400000, // 24 hours
+			httpOnly: true,
+			secure: true,
+			sameSite: 'strict',
+		});
 
 		res.status(200).json({
 			token,

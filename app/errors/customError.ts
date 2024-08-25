@@ -7,6 +7,13 @@ export class CustomError extends Error {
 	}
 }
 
+export class BadDataError extends CustomError {
+	constructor(message?: string) {
+		const status = 400;
+		super(message ?? 'BadData', status);
+	}
+}
+
 export class UnauthorizedError extends CustomError {
 	constructor(message?: string) {
 		const status = 401;

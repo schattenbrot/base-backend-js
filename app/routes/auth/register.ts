@@ -1,3 +1,4 @@
+import { BadDataError } from 'app/errors/customError';
 import { User, validRoles } from 'app/models/user.model';
 import { Handler } from 'express';
 import { body, validationResult } from 'express-validator';
@@ -35,9 +36,7 @@ const emailInUseValidator: Handler = async (req, res, next) => {
 	try {
 		const existingUser = await User.findOne({ email });
 		if (existingUser) {
-			return res
-				.status(400)
-				.json({ errors: [{ msg: 'Email is already in use' }] });
+			return next(new BadDataError('Email is already in use'));
 		}
 		next();
 	} catch (error) {
