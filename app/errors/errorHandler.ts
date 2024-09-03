@@ -1,13 +1,13 @@
 import { NODE_ENV } from 'app/config/environment';
 import { ErrorRequestHandler } from 'express';
-import { CustomError } from './customError';
+import { Explerror } from './customError';
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 	if (NODE_ENV !== 'production') {
 		console.log(err);
 	}
 
-	if (err instanceof CustomError) {
+	if (err instanceof Explerror) {
 		return res.status(err.status).json({
 			errors: [{ msg: err.message }],
 		});

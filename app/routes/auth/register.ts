@@ -13,7 +13,7 @@ const registerValidator = [
 		.optional()
 		.isArray({ min: 0 })
 		.withMessage('Roles must be an array')
-		.custom((roles) => {
+		.custom(roles => {
 			const uniqueRoles = new Set(roles);
 			if (uniqueRoles.size !== roles.length) {
 				throw new Error('Roles must be unique');
@@ -54,7 +54,7 @@ const registerHandler: Handler = async (req, res, next) => {
 	try {
 		const newUser = new User({ email, password, roles: roles ?? ['user'] });
 		await newUser.save();
-		return res.status(201).json({ message: 'User created successfully' });
+		return res.status(201).json({ msg: 'User created successfully' });
 	} catch (err) {
 		return next(err);
 	}

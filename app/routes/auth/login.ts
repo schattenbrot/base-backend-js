@@ -1,9 +1,10 @@
+import { REFRESH_TOKEN_SECURE } from 'app/config/environment';
 import {
 	InternalServerErrorError,
 	UnauthorizedError,
 } from 'app/errors/customError';
 import { User as UserModel } from 'app/models/user.model';
-import { generateJWT } from 'app/utils/generateJWT';
+import { generateAccessToken, generateRefreshToken } from 'app/utils/jwtTokens';
 import bcrypt from 'bcrypt';
 import { Handler } from 'express';
 import { body, validationResult } from 'express-validator';
@@ -31,18 +32,26 @@ const loginHandler: Handler = async (req, res, next) => {
 			return next(new UnauthorizedError('Wrong email or password'));
 		}
 
-		const token = generateJWT(user._id, user.email, user.roles);
+		const tokenPayload = {
+			id: user._id,
+			email: user.email,
+			roles: user.roles,
+		};
 
-		res.cookie('name', 'value', {
-			maxAge: 86400000, // 24 hours
-			httpOnly: true,
-			secure: true,
-			sameSite: 'strict',
+		const refreshToken = generateRefreshToken(tokenPayload);
+
+		res.cookie('refreshToken', refreshToken, {
+			httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
+			secure: REFRESH_TOKEN_SECURE, // Use 'true' if you're serving over HTTPS
+			sameSite: REFRESH_TOKEN_SECURE ? 'strict' : 'lax', // Can also be 'Strict' or 'None', depending on your requirements
+			// domain: DOMAIN, // The domain for which the cookie is valid
+			path: '/', // The path for which the cookie is valid
 		});
 
-		res.status(200).json({
-			token,
-			exp: Math.floor(Date.now() / 1000) + 14 * 24 * 3600,
+		const accessToken = generateAccessToken(tokenPayload);
+
+		res.json({
+			accessToken,
 			user: {
 				_id: user._id,
 				email: user.email,
