@@ -1,4 +1,4 @@
-# Base Backend JS / TS
+# Base Backend TS
 
 This project uses typescript but technically JS is possible as well.
 

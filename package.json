@@ -1,7 +1,7 @@
 {
-	"name": "base-backend",
+	"name": "default-backend-ts",
 	"version": "1.0.0",
-	"description": "This is a base backend using node and expressjs with authentication",
+	"description": "This is a default backend using node and expressjs with authentication",
 	"main": "server.ts",
 	"scripts": {
 		"start": "node dist/build/index.js",
